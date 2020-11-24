@@ -7,36 +7,38 @@ let testInput = {
 }
 
 
-// console.log('Custom js connnected');
 $(function () {
 
-    $('#register-form-btn').click(function () {
+    $('#registration-form-btn').click(function (e) {
 
         console.log('Submit button clicked');
-        let form = document.forms['register-form'];
+        let form = document.forms['registration-form'];
         let formAction = 'server/send_mail.php';
 
         let invalidFields = [];
 
         let input = {
-            service: form['service'].value,
-            name: form['name'].value,
+            firstName: form['firstName'].value,
+            lastName: form['lastName'].value,
             email: form['email'].value,
-            subject: form['subject'].value,
-            message: form['message'].value,
+            countryCode: form['countryCode'].value,
+            phoneNumber: form['phoneNumber'].value,
+            nationality: form['nationality'].value,
         }
 
+        console.log(input);
 
         // Iterate through the fields valdating text
         let formIsValid = formValidation(input, invalidFields);
 
         //For dynamic ui changes
-        let action = new FormActions();
+        // let action = new FormActions();
 
-        // if (!formIsValid) {//Prevent form submission if validation fails
-        //     action.showErrorMessage(invalidFields);
-        //     return;
-        // }
+        //Prevent form submission if validation fails
+        if (!formIsValid) {
+            // action.showErrorMessage(invalidFields);
+            return;
+        }
 
         // //Submit form
         // action.hideErrorMessage()
@@ -58,6 +60,7 @@ $(function () {
             let validate = validationRules(key, value);
 
             if (!validate.status) {
+
                 feedbackDiv.html(validate.message);//Set the message
                 field.addClass('is-invalid'); //Make the message visible
 
@@ -84,10 +87,11 @@ $(function () {
         }
 
         switch (key) {
-            case 'service':
+            case 'firstName':
+                validate.nameValidation();
                 break;
 
-            case 'name':
+            case 'lastName':
                 validate.nameValidation();
                 break;
 
@@ -99,13 +103,13 @@ $(function () {
                 validate.subjectValidation();
                 break;
 
-            case 'message':
-                validate.messageValidation();
+            case 'phoneNumber':
+                validate.phoneValidation();
                 break;
 
             default:
-                validate.message = `${key} case does not exist in switch`;
-                validate.status = false;
+                // validate.message = `${key} case does not exist in switch`;
+                validate.status = true;
                 break;
         }
 
@@ -124,13 +128,27 @@ $(function () {
             this.value = value.replace(/ /g, "");
         }
 
-        fieldEmptyMessage = {
-            name: 'Please enter your name',
-            email: 'Please enter your email address',
-            subject: 'Please enter a subject',
-            service: 'Please pick a service',
-            message: 'Please enter your message'
+
+        getFieldEmptyMessage(key) {
+            let fieldEmptyMessage = {
+                firstName: 'Please enter your first name',
+                lastName: 'Please enter your first name',
+                email: 'Please enter your email address',
+                countryCode: 'Please enter your country code',
+                phoneNumber: 'Please enter your phone number',
+                nationality: 'Please enter your nationality',
+            }
+
+            let message = fieldEmptyMessage[key];
+
+            if (message == null) {
+                console.error(`Message for ${key} is undefined`);
+            }
+
+            return message;
         }
+
+
 
         /**
          * Checks if thr field has a value
@@ -139,7 +157,8 @@ $(function () {
         fieldHasValue(key) {
             let isFieldFilled = this.value.length > 0;
             this.status = isFieldFilled;
-            this.message = isFieldFilled ? this.testPassedMessage : this.fieldEmptyMessage[key];
+            this.message = isFieldFilled ? this.testPassedMessage : this.getFieldEmptyMessage(key);
+
             return isFieldFilled;
         }
 
@@ -152,9 +171,18 @@ $(function () {
         emailValidation() {
             //Check if the email follows a valid pattern
             const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            let emailIsValid = re.test(this.value);
-            this.status = emailIsValid;
-            this.message = emailIsValid ? this.testPassedMessage : 'Enter a valid email address';
+            let isValidFormat = re.test(this.value);
+            let isValidDomain = this.value.endsWith("@strathmore.edu");
+            let message;
+
+            if (!isValidFormat) {
+                message = 'Enter a valid email address';
+            } else if (!isValidDomain) {
+                message = 'Only strathmore.edu emails are allowed';
+            }
+
+            this.status = isValidFormat && isValidDomain;
+            this.message = this.status ? this.testPassedMessage : message;
         }
 
         phoneValidation() {
