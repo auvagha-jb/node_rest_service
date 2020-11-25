@@ -12,7 +12,7 @@ $(function () {
             firstName: form['firstName'].value,
             lastName: form['lastName'].value,
             email: form['email'].value,
-            countryCode: form['countryCode'].value,
+            countryCode: `+${form['countryCode'].value}`,
             phoneNumber: form['phoneNumber'].value,
             nationality: form['nationality'].value
         }
@@ -70,8 +70,15 @@ $(function () {
             method: api.method.post,
             formData: input,
             formId: searchFormId,
+        }).then(function (data) {
+            let student = data[0];
+
+            if (student != null) {
+                printTable(student);
+            }
         });
     });
+
 
     function formValidation(input, invalidFields) {
         console.log('Validating form');
@@ -125,14 +132,6 @@ $(function () {
 
             case 'email':
                 validate.emailValidation();
-                break;
-
-            case 'subject':
-                validate.subjectValidation();
-                break;
-
-            case 'countryCode':
-                value = validate.countryCodeValidation();
                 break;
 
             case 'phoneNumber':
@@ -193,10 +192,6 @@ $(function () {
             this.message = isFieldFilled ? this.testPassedMessage : this.getFieldEmptyMessage(key);
 
             return isFieldFilled;
-        }
-
-        countryCodeValidation() {
-            return `+${this.value}`;
         }
 
         nameValidation() {
@@ -262,10 +257,6 @@ $(function () {
             post: "POST",
         }
 
-        paths = {
-            student: "student"
-        }
-
         sendRequest({ method, formData, formId }) {
             console.log({ method, formData });
             let submitBtn = $(`#${formId}-btn`);
@@ -295,8 +286,8 @@ $(function () {
 
     class FormActions {
         loader = '<center> <div class="loader-animation"></div> </center>';
-        successFeedback = $('#success-feedback');
-        errorFeedback = $('#error-feedback');
+        successFeedback = $('.success-feedback');
+        errorFeedback = $('.error-feedback');
         delayTime = 5000;
 
         constructor(formId = null, submitBtn = null, defaultBtnText = null) {
@@ -359,5 +350,76 @@ $(function () {
         }
 
     }
+
+    class Table {
+        constructor(headers, body) {
+            this.headers = headers;
+            this.body = body;
+        }
+
+        tableHeader(data) {
+            return `<th scope="col">${data}</th>`;
+        }
+
+        tableRow(data) {
+            return `<td>${data}</td>`;
+        }
+
+        printHeader() {
+            let th = '';
+            for (let header of this.headers) {
+                th = th.concat(this.tableHeader(header));
+            }
+            return th;
+        }
+
+        printBody() {
+            let tr = '';
+            for (let key in this.body) {
+                tr = tr.concat(this.tableRow(this.body[key]))
+            }
+            return tr;
+        }
+
+        printTable() {
+            return `<table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    ${this.printHeader()}
+                </tr>
+            </thead>
+            <tbody>
+                ${this.printBody()}
+            </tbody>
+            </table>`;
+        }
+
+    }
+
+    function printTable(data) {
+        let headers = [
+            '#',
+            'Full Name',
+            'Email Address',
+            'Phone Number',
+            'Nationality'
+        ];
+
+        let student = {
+            studentNumber: data['studentNumber'],
+            fullName: `${data['firstName']} ${data['lastName']}`,
+            email: data['email'],
+            fullPhoneNumber: `${data['countryCode']}${data['phoneNumber']}`,
+            nationality: data['nationality'],
+        }
+
+        let table = new Table(headers, student);
+
+        // console.log(table.printHeader());
+        // console.log(table.printBody());
+        // console.log(table.printTable());
+        $('#search-results').html(table.printTable())
+    }
+
 
 });

@@ -57,8 +57,8 @@
             </div>
 
             <div class="pt-3">
-                <div id="error-feedback" class="alert alert-danger" style="display: none"></div>
-                <div id="success-feedback" class="alert alert-success" style="display: none">Student registered
+                <div class="alert alert-danger error-feedback" style="display: none"></div>
+                <div class="alert alert-success success-feedback" style="display: none">Student registered
                     successfully</div>
             </div>
         </div>

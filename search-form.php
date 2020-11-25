@@ -12,5 +12,5 @@
         </div>
     </form>
 
-    <div id="search-results"></div>
+    <div id="search-results" class="py-3"></div>
 </div>
