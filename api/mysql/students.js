@@ -37,6 +37,11 @@ class Students extends Table {
         return sql;
     }
 
+    selectAll() {
+        let sql = 'SELECT * FROM students';
+        return sql;
+    }
+
 }
 
 

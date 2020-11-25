@@ -64,20 +64,244 @@ $(function () {
         console.log('Form is validated. Sending...');
         console.log(input);
 
+        getStudents({
+            formId: searchFormId,
+            formData: input,
+            emptyMessage: `No student with id ${input.studentNumber} found`
+        });
+    });
+
+    $('#all-students-btn').click(function () {
+
+        console.log('All button clicked');
+
+        let input = {
+            allStudents: true,
+        }
+
+        console.log(input);
+
+        getStudents({
+            formId: 'all-students',
+            formData: input,
+            emptyMessage: `No students found in database`
+        });
+    });
+
+    function getStudents({ formId, formData, emptyMessage }) {
         //Submit form
         let api = new Api();
         api.sendRequest({
-            method: api.method.post,
-            formData: input,
-            formId: searchFormId,
-        }).then(function (data) {
-            let student = data[0];
+            method: api.method.get,
+            formId: formId,
+            formData: formData,
+        }).then(function (student) {
 
-            if (student != null) {
+            if (student.length > 0) {
                 printTable(student);
+            } else {
+                printAlert(emptyMessage)
             }
         });
-    });
+    }
+
+    function printAlert(message) {
+        $('#search-results').html(`
+        <div class="alert alert-primary">
+            ${message}
+        </div>
+        `)
+    }
+
+
+    class Api {
+
+        method = {
+            get: "GET",
+            post: "POST",
+        }
+
+        sendRequest({ method, formData, formId }) {
+            console.log({ method, formData });
+            let submitBtn = $(`#${formId}-btn`);
+            let action = new FormActions(formId, submitBtn, submitBtn.html());
+
+            return $.ajax({
+                url: 'php/proxy.php',
+                method: method,
+                dataType: 'json',//Specify format 
+                data: formData,
+                beforeSend: action.showLoader(),
+                success: function (data) {
+                    console.log(data);
+                    action.onSend(data.message, true);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.error(xhr.responseText);
+                    console.error(textStatus);
+                    console.error(errorThrown);
+                    action.onSend(data.message, false);
+                }
+            });
+        }
+
+    }
+
+
+    class FormActions {
+        loader = '<center> <div class="loader-animation"></div> </center>';
+        successFeedback = $('.success-feedback');
+        errorFeedback = $('.error-feedback');
+        delayTime = 5000;
+
+        constructor(formId = null, submitBtn = null, defaultBtnText = null) {
+            if (formId != null && submitBtn != null && defaultBtnText != null) {
+                this.formId = formId;
+                this.submitBtn = submitBtn;
+                this.defaultBtnText = submitBtn.html();
+            }
+        }
+
+        showLoader() {
+            this.submitBtn.html(this.loader);
+        }
+
+        onSend(message, success) {
+            this.submitBtn.html(this.defaultBtnText);
+
+            if (success) {
+                this.hideErrorMessage();
+                this.showSuccessMessage(message);
+                this.resetForm();
+            } else {
+                this.showErrorMessage(message);
+            }
+
+        }
+
+        showSuccessMessage(message) {
+            this.successFeedback.html(message);
+            //Fade in the success message
+            this.successFeedback.fadeIn('fast', () => { })
+
+            //After five seconds, fadeOut message 
+            setTimeout(() => {
+                this.successFeedback.fadeOut('slow', () => { })
+            }, this.delayTime);
+        }
+
+        showErrorMessage(message) {
+            this.errorFeedback.fadeIn('fast', () => { })
+            this.errorFeedback.html(message);
+        }
+
+        hideErrorMessage() {
+            this.errorFeedback.fadeOut('slow', () => { });
+        }
+
+        resetForm() {
+            let form = document.getElementById(this.formId);
+            if (form != null) {
+                form.reset();
+            }
+        }
+
+        invalidFieldList(invalidFields) {
+            let output = "<div>Please review your form for errors in the following fields</div>";
+            output += "<ul>";
+            for (let field of invalidFields) {
+                output += `<li>${field}</li>`
+            }
+            output += "</ul>";
+            return output
+        }
+
+    }
+
+    class Table {
+        constructor(headers, body) {
+            this.headers = headers;
+            this.body = body;
+        }
+
+        tableHeader(data) {
+            return `<th scope="col">${data}</th>`;
+        }
+
+        tableRow(data) {
+            return `<td>${data}</td>`;
+        }
+
+        printHeader() {
+            let th = '';
+            for (let header of this.headers) {
+                th = th.concat(this.tableHeader(header));
+            }
+            return th;
+        }
+
+        printRow(row) {
+            let tr = '<tr>';
+            for (let key in row) {
+                tr = tr.concat(this.tableRow(row[key]))
+            }
+            tr = tr.concat('</td>')
+            return tr;
+        }
+
+        printBody() {
+            let tr = '';
+            for (let row of this.body) {
+                console.log({ row });
+                tr = tr.concat(this.printRow(row));
+            }
+            console.log(tr);
+            return tr;
+        }
+
+        printTable() {
+            return `<table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    ${this.printHeader()}
+                </tr>
+            </thead>
+            <tbody>
+                ${this.printBody()}
+            </tbody>
+            </table>`;
+        }
+
+    }
+
+    function printTable(responseData) {
+        let headers = [
+            '#',
+            'Full Name',
+            'Email Address',
+            'Phone Number',
+            'Nationality'
+        ];
+
+        let students = []
+
+        for (let data of responseData) {
+            let student = {
+                studentNumber: data['studentNumber'],
+                fullName: `${data['firstName']} ${data['lastName']}`,
+                email: data['email'],
+                fullPhoneNumber: `${data['countryCode']}${data['phoneNumber']}`,
+                nationality: data['nationality'],
+            }
+            students.push(student);
+        }
+
+
+        let table = new Table(headers, students);
+
+
+        $('#search-results').html(table.printTable())
+    }
 
 
     function formValidation(input, invalidFields) {
@@ -248,177 +472,6 @@ $(function () {
             this.status = messageIsValid;
             this.message = messageIsValid ? this.testPassedMessage : 'Meassage must be at least 10 characters';
         }
-    }
-
-    class Api {
-
-        method = {
-            get: "GET",
-            post: "POST",
-        }
-
-        sendRequest({ method, formData, formId }) {
-            console.log({ method, formData });
-            let submitBtn = $(`#${formId}-btn`);
-            let action = new FormActions(formId, submitBtn, submitBtn.html());
-
-            return $.ajax({
-                url: 'php/proxy.php',
-                method: method,
-                dataType: 'json',//Specify format 
-                data: formData,
-                beforeSend: action.showLoader(),
-                success: function (data) {
-                    console.log(data);
-                    action.onSend(data.message, true);
-                },
-                error: function (xhr, textStatus, errorThrown) {
-                    console.error(xhr.responseText);
-                    console.error(textStatus);
-                    console.error(errorThrown);
-                    action.onSend(data.message, false);
-                }
-            });
-        }
-
-    }
-
-
-    class FormActions {
-        loader = '<center> <div class="loader-animation"></div> </center>';
-        successFeedback = $('.success-feedback');
-        errorFeedback = $('.error-feedback');
-        delayTime = 5000;
-
-        constructor(formId = null, submitBtn = null, defaultBtnText = null) {
-            if (formId != null && submitBtn != null && defaultBtnText != null) {
-                this.formId = formId;
-                this.submitBtn = submitBtn;
-                this.defaultBtnText = submitBtn.html();
-            }
-        }
-
-        showLoader() {
-            this.submitBtn.html(this.loader);
-        }
-
-        onSend(message, success) {
-            this.submitBtn.html(this.defaultBtnText);
-
-            if (success) {
-                this.hideErrorMessage();
-                this.showSuccessMessage(message);
-                this.resetForm();
-            } else {
-                this.showErrorMessage(message);
-            }
-
-        }
-
-        showSuccessMessage(message) {
-            this.successFeedback.html(message);
-            //Fade in the success message
-            this.successFeedback.fadeIn('fast', () => { })
-
-            //After five seconds, fadeOut message 
-            setTimeout(() => {
-                this.successFeedback.fadeOut('slow', () => { })
-            }, this.delayTime);
-        }
-
-        showErrorMessage(message) {
-            this.errorFeedback.fadeIn('fast', () => { })
-            this.errorFeedback.html(message);
-        }
-
-        hideErrorMessage() {
-            this.errorFeedback.fadeOut('slow', () => { });
-        }
-
-        resetForm() {
-            document.getElementById(this.formId).reset();
-        }
-
-        invalidFieldList(invalidFields) {
-            let output = "<div>Please review your form for errors in the following fields</div>";
-            output += "<ul>";
-            for (let field of invalidFields) {
-                output += `<li>${field}</li>`
-            }
-            output += "</ul>";
-            return output
-        }
-
-    }
-
-    class Table {
-        constructor(headers, body) {
-            this.headers = headers;
-            this.body = body;
-        }
-
-        tableHeader(data) {
-            return `<th scope="col">${data}</th>`;
-        }
-
-        tableRow(data) {
-            return `<td>${data}</td>`;
-        }
-
-        printHeader() {
-            let th = '';
-            for (let header of this.headers) {
-                th = th.concat(this.tableHeader(header));
-            }
-            return th;
-        }
-
-        printBody() {
-            let tr = '';
-            for (let key in this.body) {
-                tr = tr.concat(this.tableRow(this.body[key]))
-            }
-            return tr;
-        }
-
-        printTable() {
-            return `<table class="table">
-            <thead class="thead-dark">
-                <tr>
-                    ${this.printHeader()}
-                </tr>
-            </thead>
-            <tbody>
-                ${this.printBody()}
-            </tbody>
-            </table>`;
-        }
-
-    }
-
-    function printTable(data) {
-        let headers = [
-            '#',
-            'Full Name',
-            'Email Address',
-            'Phone Number',
-            'Nationality'
-        ];
-
-        let student = {
-            studentNumber: data['studentNumber'],
-            fullName: `${data['firstName']} ${data['lastName']}`,
-            email: data['email'],
-            fullPhoneNumber: `${data['countryCode']}${data['phoneNumber']}`,
-            nationality: data['nationality'],
-        }
-
-        let table = new Table(headers, student);
-
-        // console.log(table.printHeader());
-        // console.log(table.printBody());
-        // console.log(table.printTable());
-        $('#search-results').html(table.printTable())
     }
 
 

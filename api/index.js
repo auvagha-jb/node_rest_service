@@ -46,3 +46,12 @@ app.get('/student/:id/', (req, res) => {
         res.send(results);
     });
 });
+
+app.get('/student/', (req, res) => {
+    let sql = students.selectAll();
+
+    db.query(sql, (err, results) => {
+        if (err) throw err;
+        res.send(results);
+    });
+});
