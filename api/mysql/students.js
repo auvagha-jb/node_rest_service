@@ -10,14 +10,14 @@ class Students extends Table {
     createTable() {
         // Create table
         let sql = ` CREATE TABLE IF NOT EXISTS students (
-            id INT(255) PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+            studentNumber INT(255) PRIMARY KEY NOT NULL AUTO_INCREMENT, 
             firstName VARCHAR(255), 
             lastName VARCHAR(255), 
             email VARCHAR(255), 
             countryCode VARCHAR(11),
             phoneNumber VARCHAR(22),
             nationality VARCHAR(22)
-        )`;
+        );`;
 
         return super.createTable(sql);
     }
@@ -28,8 +28,8 @@ class Students extends Table {
         return super.insert({ object: student, sql: sql })
     }
 
-    selectById(id) {
-        let sql = `SELECT * FROM students WHERE id = ${id}`;
+    selectById(studentId) {
+        let sql = `SELECT * FROM students WHERE studentNumber = ${studentId}`;
         return sql;
     }
 

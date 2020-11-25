@@ -14,37 +14,35 @@ const db = require('./mysql/db');
 
 //Init Tables
 
-const Users = require('./mysql/users.js')
+const Students = require('./mysql/students.js')
 
-const users = new Users();
+const students = new Students();
 
 app.use(bodyParser.json());
 
-
-//Init routes
-app.post('/users/', (req, res) => {
-    let response = users.insert(req.body);
-    console.log(req.body);
-    res.send(response);
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
 });
 
-app.get('/users/:id/', (req, res) => {
-    let sql = users.selectById(req.params.id);
+
+//Init routes
+app.post('/student/', (req, res) => {
+    if (Object.keys(req.body).length === 6) {
+        let response = students.insert(req.body);
+        console.log('Request body :');
+        console.log(req.body);
+        res.send(response);
+    } else {
+        res.send({ status: false, message: "None or not all the properties were sent for student" })
+    }
+});
+
+app.get('/student/:id/', (req, res) => {
+    let sql = students.selectById(req.params.id);
 
     db.query(sql, (err, results) => {
         if (err) throw err;
         res.send(results);
     });
 });
-
-app.put('/users/:id', (req, res) => {
-    console.log(req.body);
-    let response = users.update({ id: req.params.id, user: req.body });
-    res.send(response);
-});
-
-
-
-
-
-

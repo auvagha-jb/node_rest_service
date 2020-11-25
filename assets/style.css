@@ -1,0 +1,9 @@
+.loader-animation {
+    border: 4px solid #FFD31D;
+    border-radius: 50%;
+    border-top: 4px solid #207DFF;
+    width: 40px;
+    height: 40px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 0.75s linear infinite;
+}

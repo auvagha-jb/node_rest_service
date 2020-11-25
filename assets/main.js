@@ -1,19 +1,10 @@
-let testInput = {
-    service: 'Test Service',
-    name: 'Jerry Auvagha',
-    email: 'jerry.auvagha@strathmore.edu',
-    subject: 'Test Message',
-    message: 'Hello there, it\'s me',
-}
-
-
 $(function () {
 
     $('#registration-form-btn').click(function (e) {
 
         console.log('Submit button clicked');
         let form = document.forms['registration-form'];
-        let formAction = 'server/send_mail.php';
+        // let formAction = getUrl('/users');
 
         let invalidFields = [];
 
@@ -23,7 +14,7 @@ $(function () {
             email: form['email'].value,
             countryCode: form['countryCode'].value,
             phoneNumber: form['phoneNumber'].value,
-            nationality: form['nationality'].value,
+            nationality: form['nationality'].value
         }
 
         console.log(input);
@@ -31,18 +22,51 @@ $(function () {
         // Iterate through the fields valdating text
         let formIsValid = formValidation(input, invalidFields);
 
-        //For dynamic ui changes
-        // let action = new FormActions();
-
         //Prevent form submission if validation fails
         if (!formIsValid) {
-            // action.showErrorMessage(invalidFields);
             return;
         }
 
-        // //Submit form
-        // action.hideErrorMessage()
-        // console.log('Form is validated ... sending mail');
+        console.log('Form is validated. Sending...');
+        //Submit form
+        let api = new Api();
+        api.sendRequest({
+            method: api.method.post,
+            formData: input,
+        });
+    });
+
+    $('#search-form-btn').click(function (e) {
+
+        console.log('Submit button clicked');
+        let form = document.forms['search-form'];
+        // let formAction = getUrl('/users');
+
+        let invalidFields = [];
+
+        let input = {
+            studentNumber: form['studentNumber'].value,
+        }
+
+        console.log(input);
+
+        // Iterate through the fields valdating text
+        let formIsValid = formValidation(input, invalidFields);
+
+        //Prevent form submission if validation fails
+        if (!formIsValid) {
+            return;
+        }
+
+        console.log('Form is validated. Sending...');
+        console.log(input);
+
+        //Submit form
+        let api = new Api();
+        api.sendRequest({
+            method: api.method.post,
+            formData: input,
+        });
     });
 
     function formValidation(input, invalidFields) {
@@ -131,6 +155,7 @@ $(function () {
 
         getFieldEmptyMessage(key) {
             let fieldEmptyMessage = {
+                studentNumber: 'Please enter the student number',
                 firstName: 'Please enter your first name',
                 lastName: 'Please enter your first name',
                 email: 'Please enter your email address',
@@ -218,46 +243,51 @@ $(function () {
         }
     }
 
+    class Api {
 
-    class Mail {
+        method = {
+            get: "GET",
+            post: "POST",
+        }
 
-        /** 
-         * @param {Object} formData A object containing the values 
-         */
-        constructor(formData, url) {
-            if (formData == null || url == null) {
-                console.error("formData or url is null")
+        paths = {
+            student: "student"
+        }
+
+        getUrl(path) {
+            const BASE_URL = 'http://127.0.0.1:5000/';
+
+            if (path == null) {
+                console.error('Path cannot be null');;
+            } else if (path.length < 1) {
+                console.error('Path cannot be empty string');
+            } else {
+                console.log(path);
             }
 
-            this.formData = formData;
-            this.url = url;
-            // this.modifyPhoneNumberAndCountryCode();
+            return BASE_URL + path;
         }
 
-        modifyPhoneNumberAndCountryCode() {
-            this.formData['phone'] = this.formData['phone'].length == 10 ? this.formData['phone'].substring(1, 10) : this.formData['phone'];
-            this.formData['country'] = `+${this.formData['country']}`;
-        }
-
-        sendMail() {
-            console.log('Sending Mail');
-            let submitBtn = $('#contact-form-btn');
-            let action = new FormActions('contact-form', submitBtn, submitBtn.html());
+        sendRequest({ method, formData }) {
+            console.log({ method, formData });
+            // let submitBtn = $('#registration-form-btn');
+            // let action = new FormActions('registration-form', submitBtn, submitBtn.html());
 
             return $.ajax({
-                url: this.url,
-                method: "POST",
-                data: this.formData,
-                beforeSend: action.showLoader(),
+                url: 'php/proxy.php',
+                method: method,
+                dataType: 'json',//Specify format 
+                data: formData,
                 success: function (data) {
+                    // beforeSend: action.showLoader(),
                     console.log(data);
-                    action.onSend('Email Sent!', true);
+                    // action.onSend('Email Sent!', true);
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     console.error(xhr.responseText);
                     console.error(textStatus);
                     console.error(errorThrown);
-                    action.onSend('Something went wrong. Please try again', false);
+                    // action.onSend('Something went wrong. Please try again', false);
                 }
             });
         }

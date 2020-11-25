@@ -50,7 +50,7 @@ class Table {
             status: status
         }
     }
-    
+
     update(sql) {
         let status = false;
         let message;
