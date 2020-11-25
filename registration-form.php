@@ -47,13 +47,19 @@
                     <select class="form-control" name="countryCode" id="countryCode">
                         <option value="">Country Code</option>
                         <?php foreach ($countryCodes as $key => $value):?>
-                        <option value="+<?=$key?>"><?=$value?></option>
+                        <option value="<?=$key?>"><?=$value?></option>
                         <?php endforeach;?>
                     </select>
                 </div>
                 <input type="text" class="form-control" name="phoneNumber" id="phoneNumber" placeholder="721 123 123">
                 <div class="invalid-feedback" id="countryCode-feedback"></div>
                 <div class="invalid-feedback" id="phoneNumber-feedback"></div>
+            </div>
+
+            <div class="pt-3">
+                <div id="error-feedback" class="alert alert-danger" style="display: none"></div>
+                <div id="success-feedback" class="alert alert-success" style="display: none">Student registered
+                    successfully</div>
             </div>
         </div>
 

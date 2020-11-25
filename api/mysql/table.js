@@ -28,7 +28,7 @@ class Table {
     }
 
 
-    insert({ object, sql }) {
+    insert({ object, sql, successMessage }) {
         let status = false;
         let message;
 
@@ -38,7 +38,12 @@ class Table {
                 console.log(result);
             });
 
-            message = `${this.objectName} added successfully`;
+            if (successMessage != null) {
+                message = successMessage;
+            } else {
+                message = `${this.objectName} added successfully`;
+            }
+
             status = true;
 
         } catch (error) {

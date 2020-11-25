@@ -1,10 +1,10 @@
 $(function () {
 
-    $('#registration-form-btn').click(function (e) {
+    let registrationFormId = 'registration-form';
+    $(`#${registrationFormId}-btn`).click(function () {
 
         console.log('Submit button clicked');
-        let form = document.forms['registration-form'];
-        // let formAction = getUrl('/users');
+        let form = document.forms[registrationFormId];
 
         let invalidFields = [];
 
@@ -33,13 +33,16 @@ $(function () {
         api.sendRequest({
             method: api.method.post,
             formData: input,
+            formId: registrationFormId
         });
     });
 
-    $('#search-form-btn').click(function (e) {
+
+    let searchFormId = 'search-form';
+    $(`#${searchFormId}-btn`).click(function () {
 
         console.log('Submit button clicked');
-        let form = document.forms['search-form'];
+        let form = document.forms[searchFormId];
         // let formAction = getUrl('/users');
 
         let invalidFields = [];
@@ -66,6 +69,7 @@ $(function () {
         api.sendRequest({
             method: api.method.post,
             formData: input,
+            formId: searchFormId,
         });
     });
 
@@ -127,6 +131,10 @@ $(function () {
                 validate.subjectValidation();
                 break;
 
+            case 'countryCode':
+                value = validate.countryCodeValidation();
+                break;
+
             case 'phoneNumber':
                 validate.phoneValidation();
                 break;
@@ -185,6 +193,10 @@ $(function () {
             this.message = isFieldFilled ? this.testPassedMessage : this.getFieldEmptyMessage(key);
 
             return isFieldFilled;
+        }
+
+        countryCodeValidation() {
+            return `+${this.value}`;
         }
 
         nameValidation() {
@@ -254,40 +266,26 @@ $(function () {
             student: "student"
         }
 
-        getUrl(path) {
-            const BASE_URL = 'http://127.0.0.1:5000/';
-
-            if (path == null) {
-                console.error('Path cannot be null');;
-            } else if (path.length < 1) {
-                console.error('Path cannot be empty string');
-            } else {
-                console.log(path);
-            }
-
-            return BASE_URL + path;
-        }
-
-        sendRequest({ method, formData }) {
+        sendRequest({ method, formData, formId }) {
             console.log({ method, formData });
-            // let submitBtn = $('#registration-form-btn');
-            // let action = new FormActions('registration-form', submitBtn, submitBtn.html());
+            let submitBtn = $(`#${formId}-btn`);
+            let action = new FormActions(formId, submitBtn, submitBtn.html());
 
             return $.ajax({
                 url: 'php/proxy.php',
                 method: method,
                 dataType: 'json',//Specify format 
                 data: formData,
+                beforeSend: action.showLoader(),
                 success: function (data) {
-                    // beforeSend: action.showLoader(),
                     console.log(data);
-                    // action.onSend('Email Sent!', true);
+                    action.onSend(data.message, true);
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     console.error(xhr.responseText);
                     console.error(textStatus);
                     console.error(errorThrown);
-                    // action.onSend('Something went wrong. Please try again', false);
+                    action.onSend(data.message, false);
                 }
             });
         }
@@ -314,20 +312,20 @@ $(function () {
         }
 
         onSend(message, success) {
-            this.submitBtn.html(message);
-            this.showSuccessMessage();
-
-            setTimeout(() => {
-                this.submitBtn.html(this.defaultBtnText);
-            }, this.delayTime);
+            this.submitBtn.html(this.defaultBtnText);
 
             if (success) {
+                this.hideErrorMessage();
+                this.showSuccessMessage(message);
                 this.resetForm();
+            } else {
+                this.showErrorMessage(message);
             }
 
         }
 
-        showSuccessMessage() {
+        showSuccessMessage(message) {
+            this.successFeedback.html(message);
             //Fade in the success message
             this.successFeedback.fadeIn('fast', () => { })
 
@@ -337,9 +335,9 @@ $(function () {
             }, this.delayTime);
         }
 
-        showErrorMessage(invalidFields) {
+        showErrorMessage(message) {
             this.errorFeedback.fadeIn('fast', () => { })
-            this.errorFeedback.html(this.invalidFieldList(invalidFields));
+            this.errorFeedback.html(message);
         }
 
         hideErrorMessage() {

@@ -25,7 +25,11 @@ class Students extends Table {
 
     insert(student) {
         let sql = 'INSERT INTO students SET ?';
-        return super.insert({ object: student, sql: sql })
+        return super.insert({
+            object: student,
+            sql: sql,
+            successMessage: `${student.firstName} ${student.lastName} registered successfully`
+        })
     }
 
     selectById(studentId) {
