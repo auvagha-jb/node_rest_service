@@ -48,7 +48,7 @@ $(function () {
         let invalidFields = [];
 
         let input = {
-            studentNumber: form['studentNumber'].value,
+            studentId: form['studentId'].value,
         }
 
         console.log(input);
@@ -67,7 +67,7 @@ $(function () {
         getStudents({
             formId: searchFormId,
             formData: input,
-            emptyMessage: `No student with id ${input.studentNumber} found`
+            emptyMessage: `No student with id ${input.studentId} found`
         });
     });
 
@@ -287,7 +287,7 @@ $(function () {
 
         for (let data of responseData) {
             let student = {
-                studentNumber: data['studentNumber'],
+                studentId: data['studentId'],
                 fullName: `${data['firstName']} ${data['lastName']}`,
                 email: data['email'],
                 fullPhoneNumber: `${data['countryCode']}${data['phoneNumber']}`,
@@ -386,7 +386,7 @@ $(function () {
 
         getFieldEmptyMessage(key) {
             let fieldEmptyMessage = {
-                studentNumber: 'Please enter the student number',
+                studentId: 'Please enter the student number',
                 firstName: 'Please enter your first name',
                 lastName: 'Please enter your first name',
                 email: 'Please enter your email address',

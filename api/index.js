@@ -13,10 +13,15 @@ app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
 const db = require('./mysql/db');
 
 //Init Tables
-
-const Students = require('./mysql/students.js')
+const Students = require('./mysql/students.js');
+const Courses = require('./mysql/courses.js');
+const Faculties = require('./mysql/faculties.js');
+const Enrollment = require('./mysql/enrollment.js');
 
 const students = new Students();
+const courses = new Courses();
+const faculties = new Faculties();
+const enrollment = new Enrollment();
 
 app.use(bodyParser.json());
 
@@ -34,6 +39,7 @@ app.post('/student/', (req, res) => {
         console.log(req.body);
         res.send(response);
     } else {
+        console.log(req.body);
         res.send({ status: false, message: "None or not all the properties were sent for student" })
     }
 });
@@ -54,4 +60,49 @@ app.get('/student/', (req, res) => {
         if (err) throw err;
         res.send(results);
     });
+});
+
+//Courses
+
+app.post('/course/', (req, res) => {
+    let response = courses.insert(req.body);
+    console.log('Request body :');
+    console.log(req.body);
+    res.send(response);
+});
+
+app.get('/course/names/', (req, res) => {
+    let sql = courses.selectCourseNames();
+
+    db.query(sql, (err, results) => {
+        if (err) throw err;
+        res.send(results);
+    });
+});
+
+
+//Faculties
+app.post('/faculty/', (req, res) => {
+    let response = faculties.insert(req.body);
+    console.log('Request body :');
+    console.log(req.body);
+    res.send(response);
+});
+
+app.get('/faculty/names/', (req, res) => {
+    let sql = faculties.selectFacultyNames();
+
+    db.query(sql, (err, results) => {
+        if (err) throw err;
+        res.send(results);
+    });
+});
+
+
+//Enrollemnt
+app.post('/enrollment/', (req, res) => {
+    let response = enrollment.insert(req.body);
+    console.log('Request body :');
+    console.log(req.body);
+    res.send(response);
 });

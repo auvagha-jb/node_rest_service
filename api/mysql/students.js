@@ -10,7 +10,7 @@ class Students extends Table {
     createTable() {
         // Create table
         let sql = ` CREATE TABLE IF NOT EXISTS students (
-            studentNumber INT(255) PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+            studentId INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT, 
             firstName VARCHAR(255), 
             lastName VARCHAR(255), 
             email VARCHAR(255), 
@@ -33,7 +33,7 @@ class Students extends Table {
     }
 
     selectById(studentId) {
-        let sql = `SELECT * FROM students WHERE studentNumber = ${studentId}`;
+        let sql = `SELECT * FROM students WHERE studentId = ${studentId}`;
         return sql;
     }
 

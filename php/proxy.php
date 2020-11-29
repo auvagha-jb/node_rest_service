@@ -16,18 +16,18 @@ if(isset($_POST['firstName'])) {
     $url = "$BASE_URL/student";
     echo sendPostRequest($url, $data);
 
-}else if(isset($_GET['studentNumber'])) {
+}else if(isset($_GET['studentId'])) {
 
-    $studentNumber = $_GET['studentNumber'];
+    $studentId = $_GET['studentId'];
 
-    // echo json_encode($studentNumber);
+    // echo json_encode($studentId);
 
     // API URL
-    $url = "$BASE_URL/student/$studentNumber";
+    $url = "$BASE_URL/student/$studentId";
     echo sendGetRequest($url);
 
 } else if(isset($_GET['allStudents'])) {
-    // echo json_encode($studentNumber);
+    // echo json_encode($studentId);
 
     // API URL
     $url = "$BASE_URL/student/";
