@@ -42,5 +42,23 @@ Run the following commands in your terminal from the **root directory** of the p
   <code>npm run dev</code>
 </p>
 
+## Endpoints
+<p>
+  <code>POST: /student</code>
+  <span>Add student</span>
+</p>
+
+<p>
+  <code>GET: /student/</code>
+    <span>Fetch all students</span>
+</p>
+
+<p>
+  <code>GET: /student/:id</code>
+  <span>Fetch student by id</span>
+</p>
+
+
+
 
 
