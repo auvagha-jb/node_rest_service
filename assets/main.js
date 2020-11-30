@@ -9,6 +9,8 @@ $(function () {
         let invalidFields = [];
 
         let input = {
+            facultyId: form['facultyId'].value,
+            courseId: form['courseId'].value,
             firstName: form['firstName'].value,
             lastName: form['lastName'].value,
             email: form['email'].value,
@@ -113,7 +115,6 @@ $(function () {
         `)
     }
 
-
     class Api {
 
         method = {
@@ -124,27 +125,87 @@ $(function () {
         sendRequest({ method, formData, formId }) {
             console.log({ method, formData });
             let submitBtn = $(`#${formId}-btn`);
-            let action = new FormActions(formId, submitBtn, submitBtn.html());
+            let action = null;
+
+            if (formId != null) action = new FormActions(formId, submitBtn, submitBtn.html());
 
             return $.ajax({
                 url: 'php/proxy.php',
                 method: method,
                 dataType: 'json',//Specify format 
                 data: formData,
-                beforeSend: action.showLoader(),
+                beforeSend: function () {
+                    if (action != null) action.showLoader();
+                },
                 success: function (data) {
                     console.log(data);
-                    action.onSend(data.message, true);
+                    if (action != null) action.onSend(data.message, true);
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     console.error(xhr.responseText);
                     console.error(textStatus);
                     console.error(errorThrown);
-                    action.onSend(data.message, false);
+                    if (action != null) action.onSend(data.message, false);
                 }
             });
         }
 
+    }
+
+    function getSelectItems({ formData }) {
+        //Submit form
+        let api = new Api();
+        return api.sendRequest({
+            method: api.method.get,
+            formData: formData,
+        });
+    }
+
+    populateCourses(1);//TODO: Remove this
+    populateFaculties();
+
+    function populateCourses(facultyId) {
+        getSelectItems({
+            formData: { getCourses: true, facultyId },
+        }).then(function (courses) {
+            let select = $('.courses');
+
+            if (courses.length < 1) {
+                select.html('<option value="">No courses added</option>');
+                return;
+            }
+
+            select.html('<option value="">Select your course</option>');
+
+            for (let course of courses) {
+                console.log(`${course.courseId} : ${course.courseName}`);
+                select.append(`<option value="${course.courseId} ">
+                    ${course.courseName}
+                </option>`);
+            }
+        });
+    }
+
+    function populateFaculties() {
+        getSelectItems({
+            formData: { getFaculties: true },
+        }).then(function (faculties) {
+            let select = $('.faculties');
+
+            if (faculties.length < 1) {
+                select.html('<option value="">No faculties added</option>');
+                return;
+            }
+
+            select.html('<option value="">Select your faculty</option>');
+
+            for (let faculty of faculties) {
+                console.log(`${faculty.facultyId} : ${faculty.facultyName}`);
+                select.append(`<option value="${faculty.facultyId} ">
+                    ${faculty.facultyName}
+                </option>`);
+            }
+        });
     }
 
 
@@ -217,6 +278,7 @@ $(function () {
         }
 
     }
+
 
     class Table {
         constructor(headers, body) {
@@ -362,6 +424,10 @@ $(function () {
                 validate.phoneValidation();
                 break;
 
+            case 'countryCode':
+                validate.countryCodeValidation();
+                break;
+
             default:
                 // validate.message = `${key} case does not exist in switch`;
                 validate.status = true;
@@ -387,12 +453,14 @@ $(function () {
         getFieldEmptyMessage(key) {
             let fieldEmptyMessage = {
                 studentId: 'Please enter the student number',
+                facultyId: 'Please choose a faculty',
+                courseId: 'Please choose a course',
                 firstName: 'Please enter your first name',
                 lastName: 'Please enter your first name',
                 email: 'Please enter your email address',
-                countryCode: 'Please enter your country code',
+                countryCode: 'Please choose your country code',
                 phoneNumber: 'Please enter your phone number',
-                nationality: 'Please enter your nationality',
+                nationality: 'Please choose your nationality',
             }
 
             let message = fieldEmptyMessage[key];
@@ -422,6 +490,12 @@ $(function () {
             let testPassed = this.value.length > 2;
             this.status = testPassed;
             this.message = testPassed ? this.testPassedMessage : 'Name needs to have at least 2 characters';
+        }
+
+        countryCodeValidation() {
+            let testPassed = this.value.length > 1;
+            this.status = testPassed;
+            this.message = testPassed ? this.testPassedMessage : 'Please choose a country code';
         }
 
         emailValidation() {

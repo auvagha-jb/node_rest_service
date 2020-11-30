@@ -72,7 +72,16 @@ app.post('/course/', (req, res) => {
 });
 
 app.get('/course/names/', (req, res) => {
-    let sql = courses.selectCourseNames();
+    let sql = courses.selectCourses();
+
+    db.query(sql, (err, results) => {
+        if (err) throw err;
+        res.send(results);
+    });
+});
+
+app.get('/course/names/:facultyId', (req, res) => {
+    let sql = courses.selectCoursesByFacultyId(req.params.facultyId);
 
     db.query(sql, (err, results) => {
         if (err) throw err;

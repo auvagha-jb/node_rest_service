@@ -28,7 +28,7 @@ class Faculties extends Table {
     }
 
     selectFacultyNames() {
-        let sql = 'SELECT facultyName FROM faculties';
+        let sql = 'SELECT facultyId, facultyName FROM faculties';
         return sql;
     }
 

@@ -29,8 +29,18 @@ class Courses extends Table {
         })
     }
 
-    selectCourseNames() {
-        let sql = 'SELECT courseName FROM courses';
+    selectCourses() {
+        let sql = 'SELECT courseId, courseName FROM courses';
+        return sql;
+    }
+
+    selectCoursesByFacultyId(facultyId) {
+        let sql = ` SELECT courses.courseName, courses.courseName 
+                    FROM courses
+                    JOIN faculties ON 
+                    courses.facultyId = faculties.facultyId
+                    WHERE courses.facultyId = ${facultyId}`;
+
         return sql;
     }
 

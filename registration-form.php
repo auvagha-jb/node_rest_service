@@ -41,6 +41,22 @@
         </div>
 
         <div class="form-group">
+            <label for="facultyId">Faculty</label>
+            <select class="form-control faculties" name="facultyId" id="facultyId">
+                <option value="">Waiting...</option>
+            </select>
+            <div class="invalid-feedback" id="facultyId-feedback"></div>
+        </div>
+
+        <div class="form-group course-form-group" style="display:none">
+            <label for="courseId">Course</label>
+            <select class="form-control courses" name="courseId" id="courseId">
+                <option value="">Waiting...</option>
+            </select>
+            <div class="invalid-feedback" id="courseId-feedback"></div>
+        </div>
+
+        <div class="form-group">
             <label for="nationality">Phone Number</label>
             <div class="input-group">
                 <div class="input-group-prepend">

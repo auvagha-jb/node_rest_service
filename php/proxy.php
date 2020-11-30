@@ -1,4 +1,6 @@
 <?php
+require_once('curl.php');
+
 $BASE_URL = 'http://127.0.0.1:5000';
 
 if(isset($_POST['firstName'])) {
@@ -32,51 +34,18 @@ if(isset($_POST['firstName'])) {
     // API URL
     $url = "$BASE_URL/student/";
     echo sendGetRequest($url);
-}
 
-function sendPostRequest($url, $data) {
-    // Create a new cURL resource
-    $ch = curl_init($url);
+} else if(isset($_GET['getCourses'])) {
+    // echo json_encode($studentId);
 
-    // Setup request to send json via POST
-    // $data = array(
-    //     'username' => 'codexworld',
-    //     'password' => '123456'
-    // );
-    $payload = json_encode($data);
+    // API URL
+    $url = "$BASE_URL/course/names";
+    echo sendGetRequest($url);
 
-    // Attach encoded JSON string to the POST fields
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+} else if(isset($_GET['getFaculties'])) {
+    // echo json_encode($studentId);
 
-    // Set the content type to application/json
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-
-    // Return response instead of outputting
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-    // Execute the POST request
-    $result = curl_exec($ch);
-
-    // Close cURL resource
-    curl_close($ch);
-
-    return $result;
-}
-
-function sendGetRequest($url) {
-    $curl = curl_init();
-
-    // OPTIONS:
-    curl_setopt($curl, CURLOPT_URL, $url);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-        // 'APIKEY: 111111111111111111111',
-        'Content-Type: application/json',
-    ));
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    // EXECUTE:
-    $result = curl_exec($curl);
-    // if(!$result){die("Connection Failure");}
-    curl_close($curl);
-    return $result;
+    // API URL
+    $url = "$BASE_URL/faculty/names";
+    echo sendGetRequest($url);
 }
