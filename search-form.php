@@ -2,7 +2,6 @@
     <div class="row">
         <div class="col-md-3">
             <form class="form-inline" name="search-form" id="search-form">
-                <!-- <label class="sr-only" for="studentId">Student Number</label> -->
                 <div class="input-group mb-2 mr-sm-2">
                     <input type="text" class="form-control" id="studentId" placeholder="Student Number">
                     <div class="input-group-append">

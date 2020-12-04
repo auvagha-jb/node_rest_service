@@ -35,7 +35,7 @@ class Courses extends Table {
     }
 
     selectCoursesByFacultyId(facultyId) {
-        let sql = ` SELECT courses.courseName, courses.courseName 
+        let sql = ` SELECT courses.courseId, courses.courseName 
                     FROM courses
                     JOIN faculties ON 
                     courses.facultyId = faculties.facultyId

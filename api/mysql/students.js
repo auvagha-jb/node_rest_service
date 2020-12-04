@@ -27,28 +27,37 @@ class Students extends Table {
     }
 
 
-    insert(data, response) {
-        let student = {
-            firstName: data['firstName'],
-            lastName: data['lastName'],
-            email: data['email'],
-            countryCode: data['countryCode'],
-            phoneNumber: data['phoneNumber'],
-            nationality: data['nationality']
-        };
+    // insert(data, response) {
+    //     let student = {
+    //         firstName: data['firstName'],
+    //         lastName: data['lastName'],
+    //         email: data['email'],
+    //         countryCode: data['countryCode'],
+    //         phoneNumber: data['phoneNumber'],
+    //         nationality: data['nationality']
+    //     };
 
-        let enrollment = {
-            courseId: data['courseId'],
-        };
+    //     let enrollment = {
+    //         courseId: data['courseId'],
+    //     };
 
 
-        let studentQuery = 'INSERT INTO students SET ?';
-        let enrollmentQuery = 'INSERT INTO enrollment SET ?';
+    //     let studentQuery = 'INSERT INTO students SET ?';
+    //     let enrollmentQuery = 'INSERT INTO enrollment SET ?';
 
-        this.transaction({ studentQuery, student, enrollmentQuery, enrollment , response});
+    //     this.transaction({ studentQuery, student, enrollmentQuery, enrollment , response});
+    // }
+
+    insert(student) {
+        let sql = 'INSERT INTO students SET ?';
+        return super.insert({
+            object: student,
+            sql,
+            successMessage: `${student.firstName} ${student.lastName} added successfully`
+        });
     }
 
-    transaction({ studentQuery, student, enrollmentQuery, enrollment, response}) {
+    transaction({ studentQuery, student, enrollmentQuery, enrollment, response }) {
 
         db.beginTransaction(function (err) {
             if (err) {
@@ -58,7 +67,7 @@ class Students extends Table {
             db.query(studentQuery, student, function (error, results, fields) {
                 if (error) {
                     return db.rollback(function () {
-                        response.send({status: false});
+                        response.send({ status: false });
                         throw error;
                     });
                 }
@@ -69,7 +78,7 @@ class Students extends Table {
                 db.query(enrollmentQuery, enrollment, function (error, results, fields) {
                     if (error) {
                         return db.rollback(function () {
-                            response.send({status: false});
+                            response.send({ status: false });
                             throw error;
                         });
                     }
@@ -79,7 +88,7 @@ class Students extends Table {
                                 throw err;
                             });
                         }
-                        response.send({status: true});
+                        response.send({ status: true });
                     });
                 });
             });

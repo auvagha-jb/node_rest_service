@@ -16,6 +16,8 @@
         <div class="nav nav-pills" id="nav-tab" role="tablist">
             <a class="nav-item nav-link active" id="register-tab" data-toggle="tab" href="#register" role="tab"
                 aria-controls="register" aria-selected="true">Register Student</a>
+            <a class="nav-item nav-link" id="enrol-students-tab" data-toggle="tab" href="#enrol-students" role="tab"
+                aria-controls="enrol-students" aria-selected="false">Enrollment</a>
             <a class="nav-item nav-link" id="search-students-tab" data-toggle="tab" href="#search-students" role="tab"
                 aria-controls="search-students" aria-selected="false">Search</a>
         </div>
@@ -24,6 +26,9 @@
     <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane fade show active" id="register" role="tabpanel" aria-labelledby="register-tab">
             <?php require_once('registration-form.php');?>
+        </div>
+        <div class="tab-pane fade" id="enrol-students" role="tabpanel" aria-labelledby="enrol-students-tab">
+            <?php require_once('enrollment-form.php');?>
         </div>
         <div class="tab-pane fade" id="search-students" role="tabpanel" aria-labelledby="search-students-tab">
             <?php require_once('search-form.php');?>

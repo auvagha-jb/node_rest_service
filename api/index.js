@@ -34,9 +34,10 @@ app.use((req, res, next) => {
 //Init routes
 app.post('/student/', (req, res) => {
     if (Object.keys(req.body).length > 0) {
-        students.insert(req.body, res);
+        let response = students.insert(req.body);
         console.log('Request body :');
         console.log(req.body);
+        res.send(response);
     } else {
         console.log(req.body);
         res.send({ status: false, message: "None or not all the properties were sent for student" })

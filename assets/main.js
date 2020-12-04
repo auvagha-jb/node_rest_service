@@ -10,8 +10,7 @@ $(function () {
         let invalidFields = [];
 
         let input = {
-            facultyId: $('#facultyId').val(),
-            courseId: $('#courseId').val(),
+            addStudent: 'true',
             firstName: $('#firstName').val(),
             lastName: $('#lastName').val(),
             email: $('#email').val(),
@@ -19,6 +18,13 @@ $(function () {
             nationality: $('#nationality').val(),
             countryCode: '+'.concat($('#countryCode').val()),
         }
+
+        //TODO: Move to the correct form action, change to form['name'].value
+        // let input = {
+        //     facultyId: $('#facultyId').val(),
+        //     courseId: $('#courseId').val(),
+        //     studentIdEnrollment: $('#studentIdEnrollment').val(),
+        // }
 
         console.log(input);
 
@@ -50,6 +56,7 @@ $(function () {
         let invalidFields = [];
 
         let input = {
+            getStudentById: 'true',
             studentId: form['studentId'].value,
         }
 
@@ -75,11 +82,10 @@ $(function () {
 
     //Shows all students in the db
     $('#all-students-btn').click(function () {
-
         console.log('All button clicked');
 
         let input = {
-            allStudents: true,
+            getAllStudents: true,
         }
 
         console.log(input);
@@ -98,6 +104,7 @@ $(function () {
         if (value != "") {
             let facultyId = parseInt(value);
             populateCourses(facultyId);
+            $('#facultyIdCourse').val(facultyId);
             $('.course-form-group').fadeIn('slow')
         } else {
             $('.course-form-group').fadeOut('fast')
@@ -114,7 +121,7 @@ $(function () {
             facultyName: $('#facultyName').val(),
         };
 
-        let invalidFields = []
+        let invalidFields = [];
 
         console.log(input);
 
@@ -131,8 +138,39 @@ $(function () {
                 action.manualFormReset(input);
             });
         }
+    });
 
+    //New course
+    $(document).on('click', '#course-form-btn', function () {
+        console.log('Submit course form');
 
+        let input = {
+            addCourse: 'true',
+            courseName: $('#courseName').val(),
+            facultyIdCourse: $('#facultyIdCourse').val(),
+            courseType: $('#courseType').val(),
+        };
+
+        let invalidFields = [];
+
+        console.log(input);
+
+        if (formValidation(input, invalidFields)) {
+            let facultyId = input['facultyIdCourse'];
+
+            //Submit form
+            let api = new Api();
+            api.sendRequest({
+                method: api.method.post,
+                formData: input,
+                formId: 'course-form'
+            }).then(function () {
+                let action = new FormActions();
+                $('#facultyId').val(facultyId);
+                populateCourses(facultyId);
+                action.manualFormReset(input);
+            });
+        }
     });
 
     function getStudents({ formId, formData, emptyMessage }) {
@@ -190,7 +228,7 @@ $(function () {
                     console.error(xhr.responseText);
                     console.error(textStatus);
                     console.error(errorThrown);
-                    if (action != null) action.onSend(data.message, false);
+                    if (action != null) action.onSend('Something went wrong. Please try again.', false);
                 }
             });
         }

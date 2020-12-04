@@ -3,7 +3,7 @@ require_once('curl.php');
 
 $BASE_URL = 'http://127.0.0.1:5000';
 
-if(isset($_POST['firstName'])) {
+if(isset($_POST['addStudent'])) {
 
     $data = [
         'countryCode' => $_POST['countryCode'], 
@@ -13,12 +13,34 @@ if(isset($_POST['firstName'])) {
         'nationality' => $_POST['nationality'], 
         'phoneNumber' => $_POST['phoneNumber'] 
     ];
+    
+    // $data = [ TODO: Move to its own function
+    //     'courseId' => $_POST['courseId'], 
+    //     'countryCode' => $_POST['countryCode'], 
+    // ];
 
     // API URL
     $url = "$BASE_URL/student";
     echo sendPostRequest($url, $data);
+    
+    
+} else if(isset($_POST['addFaculty'])) {
+    $url = "$BASE_URL/faculty/";
+    $data = ['facultyName' => $_POST['facultyName']];
+    echo sendPostRequest($url, $data);
 
-}else if(isset($_GET['studentId'])) {
+
+} else if(isset($_POST['addCourse'])) {
+    $url = "$BASE_URL/course/";
+    $data = [
+        'facultyId' => $_POST['facultyIdCourse'],
+        'courseName' => $_POST['courseName'],
+        'courseType' => $_POST['courseType'],
+    ];
+    echo sendPostRequest($url, $data);
+
+
+}else if(isset($_GET['getStudentById'])) {
 
     $studentId = $_GET['studentId'];
 
@@ -28,12 +50,14 @@ if(isset($_POST['firstName'])) {
     $url = "$BASE_URL/student/$studentId";
     echo sendGetRequest($url);
 
-} else if(isset($_GET['allStudents'])) {
+
+} else if(isset($_GET['getAllStudents'])) {
     // echo json_encode($studentId);
 
     // API URL
     $url = "$BASE_URL/student/";
     echo sendGetRequest($url);
+
 
 } else if(isset($_GET['getCourses'])) {
 
@@ -42,14 +66,11 @@ if(isset($_POST['firstName'])) {
     $url = "$BASE_URL/course/names/$facultyId";
     echo sendGetRequest($url);
 
+
 } else if(isset($_GET['getFaculties'])) {
 
     // API URL
     $url = "$BASE_URL/faculty/names";
     echo sendGetRequest($url);
 
-} else if(isset($_POST['addFaculty'])) {
-    $url = "$BASE_URL/faculty/";
-    $data = ['facultyName' => $_POST['facultyName']];
-    echo sendPostRequest($url, $data);
-}
+} 
