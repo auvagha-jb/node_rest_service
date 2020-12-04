@@ -252,6 +252,7 @@ $(function () {
         }
 
         showErrorMessage(message) {
+            message = message ?? 'Something went wrong .Please try again later';
             this.errorFeedback.fadeIn('fast', () => { })
             this.errorFeedback.html(message);
         }

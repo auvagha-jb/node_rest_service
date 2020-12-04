@@ -10,18 +10,18 @@ class Enrollment extends Table {
     createTable() {
         // Create table
         let sql = ` CREATE TABLE IF NOT EXISTS enrollment (
-            studentId INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT, 
-            courseId INT(11) 
+            studentId INT(11) NOT NULL, 
+            courseId INT(11) NOT NULL
         );`;
 
         return super.createTable(sql);
     }
 
 
-    insert({studentId, courseId}) {
+    insert({ studentId, courseId }) {
         let sql = 'INSERT INTO enrollment SET ?';
         return super.insert({
-            object: {studentId, courseId},
+            object: { studentId, courseId },
             sql: sql,
         })
     }
