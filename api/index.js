@@ -91,10 +91,10 @@ app.get('/course/names/:facultyId', (req, res) => {
 
 //Faculties
 app.post('/faculty/', (req, res) => {
-    let response = faculties.insert(req.body);
+    let response = faculties.insert(req.body, res);
     console.log('Request body :');
     console.log(req.body);
-    res.send(response);
+    // res.send(response);
 });
 
 app.get('/faculty/names/', (req, res) => {

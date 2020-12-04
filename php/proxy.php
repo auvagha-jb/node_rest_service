@@ -36,16 +36,20 @@ if(isset($_POST['firstName'])) {
     echo sendGetRequest($url);
 
 } else if(isset($_GET['getCourses'])) {
-    // echo json_encode($studentId);
 
+    $facultyId = $_GET['facultyId'];
     // API URL
-    $url = "$BASE_URL/course/names";
+    $url = "$BASE_URL/course/names/$facultyId";
     echo sendGetRequest($url);
 
 } else if(isset($_GET['getFaculties'])) {
-    // echo json_encode($studentId);
 
     // API URL
     $url = "$BASE_URL/faculty/names";
     echo sendGetRequest($url);
+
+} else if(isset($_POST['addFaculty'])) {
+    $url = "$BASE_URL/faculty/";
+    $data = ['facultyName' => $_POST['facultyName']];
+    echo sendPostRequest($url, $data);
 }

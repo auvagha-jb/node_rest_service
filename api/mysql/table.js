@@ -35,14 +35,10 @@ class Table {
         try {
             db.query(sql, object, (err, result) => {
                 if (err) throw err;
-                console.log(result);
+                console.log(result.insertId);
             });
 
-            if (successMessage != null) {
-                message = successMessage;
-            } else {
-                message = `${this.objectName} added successfully`;
-            }
+            message = successMessage != null ? successMessage : `${this.objectName} added successfully`;
 
             status = true;
 
@@ -52,8 +48,28 @@ class Table {
 
         return {
             message: message,
-            status: status
+            status: status,
         }
+    }
+
+    insertAndGetId({ object, sql, successMessage, response }) {
+        db.query(sql, object, (err, result) => {
+            let status = false;
+            let message = 'Something went wrong. Please try again';
+
+            try {
+
+                if (err) throw err;
+                let insertId = result.insertId;
+                console.log({ insertId });
+                message = successMessage != null ? successMessage : `${this.objectName} added successfully`;
+                status = true;
+
+                response.send({ message, status, insertId })
+            } catch (error) {
+                response.send({ message, status })
+            }
+        });
     }
 
     update(sql) {

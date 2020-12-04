@@ -18,12 +18,13 @@ class Faculties extends Table {
     }
 
 
-    insert(faculty) {
+    insert(faculty, response) {
         let sql = 'INSERT INTO faculties SET ?';
-        return super.insert({
+        return super.insertAndGetId({
             object: faculty,
             sql: sql,
-            successMessage: `${faculty.facultyName} added successfully`
+            successMessage: `${faculty.facultyName} added successfully`,
+            response,
         })
     }
 

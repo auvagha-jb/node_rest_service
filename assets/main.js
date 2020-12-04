@@ -1,22 +1,23 @@
 $(function () {
 
+
     let registrationFormId = 'registration-form';
+    //Registers new student
     $(`#${registrationFormId}-btn`).click(function () {
 
         console.log('Submit button clicked');
-        let form = document.forms[registrationFormId];
 
         let invalidFields = [];
 
         let input = {
-            facultyId: form['facultyId'].value,
-            courseId: form['courseId'].value,
-            firstName: form['firstName'].value,
-            lastName: form['lastName'].value,
-            email: form['email'].value,
-            countryCode: `+${form['countryCode'].value}`,
-            phoneNumber: form['phoneNumber'].value,
-            nationality: form['nationality'].value
+            facultyId: $('#facultyId').val(),
+            courseId: $('#courseId').val(),
+            firstName: $('#firstName').val(),
+            lastName: $('#lastName').val(),
+            email: $('#email').val(),
+            phoneNumber: $('#phoneNumber').val(),
+            nationality: $('#nationality').val(),
+            countryCode: '+'.concat($('#countryCode').val()),
         }
 
         console.log(input);
@@ -24,23 +25,22 @@ $(function () {
         // Iterate through the fields valdating text
         let formIsValid = formValidation(input, invalidFields);
 
-        //Prevent form submission if validation fails
-        if (!formIsValid) {
-            return;
+        //Submit form if validation passes
+        if (formIsValid) {
+            console.log('Form is validated. Sending...');
+            //Submit form
+            let api = new Api();
+            api.sendRequest({
+                method: api.method.post,
+                formData: input,
+                formId: registrationFormId
+            });
         }
 
-        console.log('Form is validated. Sending...');
-        //Submit form
-        let api = new Api();
-        api.sendRequest({
-            method: api.method.post,
-            formData: input,
-            formId: registrationFormId
-        });
     });
 
-
     let searchFormId = 'search-form';
+    //Shows students by Id
     $(`#${searchFormId}-btn`).click(function () {
 
         console.log('Submit button clicked');
@@ -73,6 +73,7 @@ $(function () {
         });
     });
 
+    //Shows all students in the db
     $('#all-students-btn').click(function () {
 
         console.log('All button clicked');
@@ -88,6 +89,50 @@ $(function () {
             formData: input,
             emptyMessage: `No students found in database`
         });
+    });
+
+    $('#facultyId').change(function () {
+        let value = $(this).val();
+        console.log({ value });
+
+        if (value != "") {
+            let facultyId = parseInt(value);
+            populateCourses(facultyId);
+            $('.course-form-group').fadeIn('slow')
+        } else {
+            $('.course-form-group').fadeOut('fast')
+        }
+    });
+
+    //Modals
+    //New faculty
+    $(document).on('click', '#faculty-form-btn', function () {
+        console.log('Submit faculty form');
+
+        let input = {
+            addFaculty: 'true',
+            facultyName: $('#facultyName').val(),
+        };
+
+        let invalidFields = []
+
+        console.log(input);
+
+        if (formValidation(input, invalidFields)) {
+            //Submit form
+            let api = new Api();
+            api.sendRequest({
+                method: api.method.post,
+                formData: input,
+                formId: 'faculty-form'
+            }).then(function (data) {
+                let action = new FormActions();
+                populateFaculties();
+                action.manualFormReset(input);
+            });
+        }
+
+
     });
 
     function getStudents({ formId, formData, emptyMessage }) {
@@ -161,7 +206,6 @@ $(function () {
         });
     }
 
-    populateCourses(1);//TODO: Remove this
     populateFaculties();
 
     function populateCourses(facultyId) {
@@ -201,7 +245,7 @@ $(function () {
 
             for (let faculty of faculties) {
                 console.log(`${faculty.facultyId} : ${faculty.facultyName}`);
-                select.append(`<option value="${faculty.facultyId} ">
+                select.append(`<option value="${faculty.facultyId}">
                     ${faculty.facultyName}
                 </option>`);
             }
@@ -265,6 +309,16 @@ $(function () {
             let form = document.getElementById(this.formId);
             if (form != null) {
                 form.reset();
+            }
+        }
+
+        manualFormReset(input) {
+            for (let key in input) {
+                let field = $(`#${key}`);
+
+                if (field != null) {
+                    field.val("");
+                }
             }
         }
 
@@ -464,7 +518,7 @@ $(function () {
                 nationality: 'Please choose your nationality',
             }
 
-            let message = fieldEmptyMessage[key];
+            let message = fieldEmptyMessage[key] ?? 'This field is required';
 
             if (message == null) {
                 console.error(`Message for ${key} is undefined`);
