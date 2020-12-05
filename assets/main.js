@@ -31,6 +31,8 @@ $(function () {
                 method: api.method.post,
                 formData: input,
                 formId: formId
+            }).then(function (data) {
+                $('.success-feedback').append(` Id: ${data['insertId']}`);
             });
         }
 
@@ -641,6 +643,14 @@ $(function () {
                 validate.countryCodeValidation();
                 break;
 
+            case 'studentId':
+                validate.studentIdValidation();
+                break;
+
+            case 'studentIdEnrollment':
+                validate.studentIdValidation();
+                break;
+
             default:
                 // validate.message = `${key} case does not exist in switch`;
                 validate.status = true;
@@ -745,6 +755,13 @@ $(function () {
             let phoneIsValid = /^\d+$/.test(this.value);
             this.status = phoneIsValid;
             this.message = phoneIsValid ? this.testPassedMessage : 'Phone number must contain only numbers';
+        }
+
+        studentIdValidation() {
+            //Make sure only numbers are entered 
+            let studentIdIsValid = /^\d+$/.test(this.value);
+            this.status = studentIdIsValid;
+            this.message = studentIdIsValid ? this.testPassedMessage : 'Student id must contain only numbers';
         }
 
 

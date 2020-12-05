@@ -65,7 +65,7 @@ class Table {
                 message = successMessage != null ? successMessage : `${this.objectName} added successfully`;
                 status = true;
 
-                response.send({ message, status, insertId })
+                response.send({ message, status, insertId });
             } catch (error) {
                 response.send({ message, status })
             }

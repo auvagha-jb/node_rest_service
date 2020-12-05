@@ -1,3 +1,4 @@
+const { response } = require('express');
 const db = require('./db');
 const Enrollment = require('./enrollment');
 const Table = require('./table')
@@ -27,33 +28,13 @@ class Students extends Table {
     }
 
 
-    // insert(data, response) {
-    //     let student = {
-    //         firstName: data['firstName'],
-    //         lastName: data['lastName'],
-    //         email: data['email'],
-    //         countryCode: data['countryCode'],
-    //         phoneNumber: data['phoneNumber'],
-    //         nationality: data['nationality']
-    //     };
-
-    //     let enrollment = {
-    //         courseId: data['courseId'],
-    //     };
-
-
-    //     let studentQuery = 'INSERT INTO students SET ?';
-    //     let enrollmentQuery = 'INSERT INTO enrollment SET ?';
-
-    //     this.transaction({ studentQuery, student, enrollmentQuery, enrollment , response});
-    // }
-
-    insert(student) {
+    insert(student, response) {
         let sql = 'INSERT INTO students SET ?';
-        return super.insert({
+        return super.insertAndGetId({
             object: student,
             sql,
-            successMessage: `${student.firstName} ${student.lastName} added successfully`
+            successMessage: `${student.firstName} ${student.lastName} added successfully`,
+            response
         });
     }
 
