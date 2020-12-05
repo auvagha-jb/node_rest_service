@@ -43,6 +43,11 @@
             </div>
         </div>
 
+        <div class="py-2">
+            <div class="alert alert-danger error-feedback" style="display: none"></div>
+            <div class="alert alert-success success-feedback" style="display: none">Alert Success</div>
+        </div>
+
         <button type="button" class="btn btn-primary" id="enrollment-form-btn">Submit</button>
     </form>
 </div>

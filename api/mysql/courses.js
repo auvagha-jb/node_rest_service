@@ -39,7 +39,9 @@ class Courses extends Table {
                     FROM courses
                     JOIN faculties ON 
                     courses.facultyId = faculties.facultyId
-                    WHERE courses.facultyId = ${facultyId}`;
+                    WHERE courses.facultyId = ${facultyId}
+                    ORDER BY courses.courseType DESC
+                    `;
 
         return sql;
     }

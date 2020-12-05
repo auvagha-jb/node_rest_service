@@ -13,11 +13,6 @@ if(isset($_POST['addStudent'])) {
         'nationality' => $_POST['nationality'], 
         'phoneNumber' => $_POST['phoneNumber'] 
     ];
-    
-    // $data = [ TODO: Move to its own function
-    //     'courseId' => $_POST['courseId'], 
-    //     'countryCode' => $_POST['countryCode'], 
-    // ];
 
     // API URL
     $url = "$BASE_URL/student";
@@ -40,7 +35,16 @@ if(isset($_POST['addStudent'])) {
     echo sendPostRequest($url, $data);
 
 
-}else if(isset($_GET['getStudentById'])) {
+} else if(isset($_POST['addEnrollment'])) {
+    $url = "$BASE_URL/enrollment";
+    $data = [ 
+        'courseId' => $_POST['courseId'], 
+        'studentId' => $_POST['studentIdEnrollment'], 
+    ];
+    echo sendPostRequest($url, $data);
+
+    
+} else if(isset($_GET['getStudentById'])) {
 
     $studentId = $_GET['studentId'];
 

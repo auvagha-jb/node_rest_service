@@ -3,7 +3,7 @@ const Table = require('./table')
 class Enrollment extends Table {
 
     constructor() {
-        super('Enrollemnt');
+        super('Enrollment');
         this.createTable();
     }
 

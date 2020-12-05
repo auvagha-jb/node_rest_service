@@ -1,10 +1,8 @@
 $(function () {
 
-
-    let registrationFormId = 'registration-form';
     //Registers new student
-    $(`#${registrationFormId}-btn`).click(function () {
-
+    $(`#registration-form-btn`).click(function () {
+        let formId = 'registration-form';
         console.log('Submit button clicked');
 
         let invalidFields = [];
@@ -19,13 +17,6 @@ $(function () {
             countryCode: '+'.concat($('#countryCode').val()),
         }
 
-        //TODO: Move to the correct form action, change to form['name'].value
-        // let input = {
-        //     facultyId: $('#facultyId').val(),
-        //     courseId: $('#courseId').val(),
-        //     studentIdEnrollment: $('#studentIdEnrollment').val(),
-        // }
-
         console.log(input);
 
         // Iterate through the fields valdating text
@@ -39,19 +30,19 @@ $(function () {
             api.sendRequest({
                 method: api.method.post,
                 formData: input,
-                formId: registrationFormId
+                formId: formId
             });
         }
 
     });
 
-    let searchFormId = 'search-form';
-    //Shows students by Id
-    $(`#${searchFormId}-btn`).click(function () {
 
+    //Shows students by Id
+    $(`#search-form-btn`).click(function () {
         console.log('Submit button clicked');
-        let form = document.forms[searchFormId];
-        // let formAction = getUrl('/users');
+
+        let formId = 'search-form';
+        let form = document.forms[formId];
 
         let invalidFields = [];
 
@@ -74,7 +65,7 @@ $(function () {
         console.log(input);
 
         getStudents({
-            formId: searchFormId,
+            formId: formId,
             formData: input,
             emptyMessage: `No student with id ${input.studentId} found`
         });
@@ -111,6 +102,35 @@ $(function () {
         }
     });
 
+    $('#enrollment-form-btn').click(function () {
+        let formId = 'enrollment-form';
+
+        let input = {
+            addEnrollment: 'true',
+            facultyId: $('#facultyId').val(),
+            courseId: $('#courseId').val(),
+            studentIdEnrollment: $('#studentIdEnrollment').val(),
+        }
+
+        console.log(input);
+
+        let invalidFields = [];
+
+        if (formValidation(input, invalidFields)) {
+            //Submit form
+            let api = new Api();
+            api.sendRequest({
+                method: api.method.post,
+                formData: input,
+                formId: formId
+            }).then(function () {
+                let action = new FormActions();
+                populateFaculties();
+                action.manualFormReset(input);
+            });
+        }
+    });
+
     //Modals
     //New faculty
     $(document).on('click', '#faculty-form-btn', function () {
@@ -132,7 +152,7 @@ $(function () {
                 method: api.method.post,
                 formData: input,
                 formId: 'faculty-form'
-            }).then(function (data) {
+            }).then(function () {
                 let action = new FormActions();
                 populateFaculties();
                 action.manualFormReset(input);
