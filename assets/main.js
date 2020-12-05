@@ -88,6 +88,30 @@ $(function () {
         });
     });
 
+    //Shows all courses in the db
+    $('#all-courses-btn').click(function () {
+        console.log('All button clicked');
+
+        let input = {
+            getAllCourses: true,
+        }
+
+        console.log(input);
+
+        let api = new Api();
+
+        api.sendRequest({
+            method: api.method.get,
+            formData: input,
+        }).then(function (courses) {
+            if (courses.length > 0) {
+                printCoursesTable(courses);
+            } else {
+                printAlert(emptyMessage)
+            }
+        });
+    });
+
     $('#facultyId').change(function () {
         let value = $(this).val();
         console.log({ value });
@@ -203,7 +227,7 @@ $(function () {
         }).then(function (student) {
 
             if (student.length > 0) {
-                printTable(student);
+                printStudentsTable(student);
             } else {
                 printAlert(emptyMessage)
             }
@@ -449,7 +473,7 @@ $(function () {
 
     }
 
-    function printTable(responseData) {
+    function printStudentsTable(responseData) {
         let headers = [
             '#',
             'Full Name',
@@ -471,8 +495,36 @@ $(function () {
             students.push(student);
         }
 
-
         let table = new Table(headers, students);
+
+        $('#search-results').html(table.printTable())
+    }
+
+    function printCoursesTable(responseData) {
+        let headers = [
+            '#',
+            'Course Type',
+            'Course Name',
+            'Faculty',
+        ];
+
+        let courses = []
+
+        let count = 0;
+        for (let data of responseData) {
+            count++;
+            let courseType = data['courseType'];
+            let course = {
+                no: count,
+                courseType: courseType.charAt(0).toUpperCase() + courseType.slice(1),
+                courseName: data['courseName'],
+                facultyName: data['facultyName'],
+            }
+            courses.push(course);
+        }
+
+
+        let table = new Table(headers, courses);
 
 
         $('#search-results').html(table.printTable())
@@ -660,6 +712,5 @@ $(function () {
             this.message = messageIsValid ? this.testPassedMessage : 'Meassage must be at least 10 characters';
         }
     }
-
 
 });

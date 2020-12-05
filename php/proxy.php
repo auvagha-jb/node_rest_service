@@ -63,6 +63,13 @@ if(isset($_POST['addStudent'])) {
     echo sendGetRequest($url);
 
 
+} else if(isset($_GET['getAllCourses'])) {
+
+    // API URL
+    $url = "$BASE_URL/course";
+    echo sendGetRequest($url);
+
+
 } else if(isset($_GET['getCourses'])) {
 
     $facultyId = $_GET['facultyId'];

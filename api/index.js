@@ -71,6 +71,15 @@ app.post('/course/', (req, res) => {
     res.send(response);
 });
 
+app.get('/course/', (req, res) => {
+    let sql = courses.selectAllCourses();
+
+    db.query(sql, (err, results) => {
+        if (err) throw err;
+        res.send(results);
+    });
+});
+
 app.get('/course/names/', (req, res) => {
     let sql = courses.selectCourses();
 

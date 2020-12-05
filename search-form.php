@@ -7,11 +7,11 @@
             </button>
         </div>
 
-        <!-- <div class="px-1">
+        <div class="px-1">
             <button class="btn btn-primary" id="all-courses-btn">
                 <i class="fa fa-graduation-cap"></i> All Courses
             </button>
-        </div> -->
+        </div>
     </div>
 
 
