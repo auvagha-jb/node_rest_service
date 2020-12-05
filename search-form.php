@@ -31,7 +31,38 @@
         </div>
     </div>
 
-    <div id="search-results" class="py-3">
+
+    <div class="row">
+        <div class="col-md-4">
+            <form class="form-inline" name="course-search-form" id="course-search-form">
+                <div class="form-group">
+                    <div class="input-group">
+                        <select class="form-control faculties" name="facultyIdSearch" id="facultyIdSearch">
+                            <option value="">Waiting...</option>
+                        </select>
+                        <div class="invalid-feedback" id="facultyIdSearch-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="form-group course-form-group" style="display:none">
+                    <div class="input-group">
+                        <select class="form-control courses" name="courseIdSearch" id="courseIdSearch">
+                            <option value="">Waiting...</option>
+                        </select>
+                        <div class="invalid-feedback" id="courseIdSearch-feedback"></div>
+                    </div>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-primary" id="course-search-form-btn">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="search-results py-3">
 
     </div>
 </div>

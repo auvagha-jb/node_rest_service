@@ -84,4 +84,15 @@ if(isset($_POST['addStudent'])) {
     $url = "$BASE_URL/faculty/names";
     echo sendGetRequest($url);
 
-} 
+    
+} else if(isset($_GET['getCourseByEnrollment'])) {
+    $courseId = $_GET['courseIdSearch'];
+
+    // API URL
+    $url = "$BASE_URL/course/enrollment/$courseId";
+    echo sendGetRequest($url);
+
+
+} else {
+    echo(json_encode(['status'=> false, 'message' => 'No action defined']));
+}

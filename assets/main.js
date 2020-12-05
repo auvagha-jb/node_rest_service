@@ -107,12 +107,12 @@ $(function () {
             if (courses.length > 0) {
                 printCoursesTable(courses);
             } else {
-                printAlert(emptyMessage)
+                printAlert('No courses found')
             }
         });
     });
 
-    $('#facultyId').change(function () {
+    $('.faculties').change(function () {
         let value = $(this).val();
         console.log({ value });
 
@@ -125,6 +125,7 @@ $(function () {
             $('.course-form-group').fadeOut('fast')
         }
     });
+
 
     $('#enrollment-form-btn').click(function () {
         let formId = 'enrollment-form';
@@ -154,6 +155,36 @@ $(function () {
             });
         }
     });
+
+    $('#course-search-form-btn').click(function () {
+        let input = {
+            getCourseByEnrollment: 'true',
+            courseIdSearch: $('#courseIdSearch').val(),
+            facultyIdSearch: $('#facultyIdSearch').val(),
+        }
+
+        console.log(input);
+
+        let invalidFields = [];
+
+        let api = new Api();
+
+        if (formValidation(input, invalidFields)) {
+            //Submit form
+            api.sendRequest({
+                method: api.method.get,
+                formData: input,
+            }).then(function (data) {
+                if (data.length > 0) {
+                    printCourseEnrollemntTable(data);
+                } else {
+                    printAlert(`No one enrolled to ${$('#courseIdSearch option:selected').html()}`)
+                }
+            });
+        }
+
+    });
+
 
     //Modals
     //New faculty
@@ -235,7 +266,7 @@ $(function () {
     }
 
     function printAlert(message) {
-        $('#search-results').html(`
+        $('.search-results').html(`
         <div class="alert alert-primary">
             ${message}
         </div>
@@ -497,7 +528,7 @@ $(function () {
 
         let table = new Table(headers, students);
 
-        $('#search-results').html(table.printTable())
+        $('.search-results').html(table.printTable())
     }
 
     function printCoursesTable(responseData) {
@@ -527,7 +558,24 @@ $(function () {
         let table = new Table(headers, courses);
 
 
-        $('#search-results').html(table.printTable())
+        $('.search-results').html(table.printTable())
+    }
+
+    function printCourseEnrollemntTable(responseData) {
+        let headers = [
+            '#',
+            'Full Name',
+            'Student Id',
+            'Phone Number',
+            'Email Address'
+        ];
+
+        let table = new Table(headers, responseData);
+
+        $('.search-results').html(`
+        <div class="lead">${$("#courseIdSearch option:selected").html()}
+        </div>`);
+        $('.search-results').append(table.printTable());
     }
 
 

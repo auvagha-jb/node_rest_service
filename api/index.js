@@ -98,10 +98,19 @@ app.get('/course/names/:facultyId', (req, res) => {
     });
 });
 
+app.get('/course/enrollment/:courseId', (req, res) => {
+    let sql = courses.selectCoursesByEnrollment(req.params.courseId);
+
+    db.query(sql, (err, results) => {
+        if (err) throw err;
+        res.send(results);
+    });
+});
+
 
 //Faculties
 app.post('/faculty/', (req, res) => {
-    let response = faculties.insert(req.body, res);
+    faculties.insert(req.body, res);
     console.log('Request body :');
     console.log(req.body);
     // res.send(response);
@@ -117,7 +126,7 @@ app.get('/faculty/names/', (req, res) => {
 });
 
 
-//Enrollemnt
+//Enrollment
 app.post('/enrollment/', (req, res) => {
     let response = enrollment.insert(req.body);
     console.log('Request body :');

@@ -57,7 +57,26 @@ class Courses extends Table {
         return sql;
     }
 
-}
+    selectCoursesByEnrollment(courseId) {
+        let sql = ` SELECT ROW_NUMBER() OVER (ORDER BY studentId) no,  
+                    CONCAT(firstName," ", lastName) as fullName,  
+                    students.studentId,
+                    CONCAT(countryCode, phoneNumber) as  phoneNumber,
+                    email
+                    FROM students 
+                    JOIN enrollment  
+                    ON students.studentId = enrollment.studentId 
+                    JOIN courses
+                    ON enrollment.courseId = courses.courseId 
+                    JOIN faculties 
+                    ON courses.facultyId = faculties.facultyId
+                    WHERE courses.courseId = ${courseId}
+                    ORDER BY courses.courseType DESC
+                    `;
 
+        return sql;
+    }
+
+}
 
 module.exports = Courses;

@@ -19,7 +19,7 @@
                         data-target="#facultyModalCenter">
                         <i class="fa fa-plus-circle"></i>
                     </button>
-                    <?php require('modals/faculty-modal.php');?>
+                    <?php require_once('modals/faculty-modal.php');?>
                 </div>
                 <div class="invalid-feedback" id="facultyId-feedback"></div>
             </div>
@@ -37,7 +37,7 @@
                         data-target="#courseModalCenter">
                         <i class="fa fa-plus-circle"></i>
                     </button>
-                    <?php require('modals/course-modal.php');?>
+                    <?php require_once('modals/course-modal.php');?>
                 </div>
                 <div class="invalid-feedback" id="courseId-feedback"></div>
             </div>
