@@ -1,6 +1,6 @@
 # node_rest_service
 <p>A Simple REST Service Made with node.js and express and PHP proxy</p>
-<p>For a code walthorugh and demo click [here](https://1drv.ms/v/s!Aif0zGY_1ftvhZMr7HBhU9Ztxx2rMw?e=ye7Zfl)</p>
+<p> For a code walkthrough and project demo click [here:](https://1drv.ms/v/s!Aif0zGY_1ftvhZMr7HBhU9Ztxx2rMw?e=ye7Zfl)</p>
 
 # Requirements
 * Node.js
